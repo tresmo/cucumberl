@@ -43,14 +43,22 @@ run_tree(Tree, FeatureModule) ->
     Result =
         try
             State0 = call_setup(FeatureModule),
-            {_, State1, Stats} =
-                lists:foldl(fun(Entry, Acc) ->
-                                    process_line(Entry, Acc, FeatureModule)
+            State1 = call_scenario_setup(FeatureModule, State0),
+            {_, State2, Stats} =
+                lists:foldl(fun(Entry, Acc = {_, InterimState, _}) ->
+                                    try
+                                        process_line(Entry, Acc, FeatureModule)
+                                    catch
+                                        Class:Reason ->
+                                            call_teardown(FeatureModule,
+                                                          call_scenario_teardown(FeatureModule, InterimState)),
+                                        erlang:raise(Class, Reason, erlang:get_stacktrace())
+                                    end
                             end,
-                            {false, State0, #cucumberl_stats{}},
+                            {false, State1, #cucumberl_stats{}},
                   Tree),
-            State2 = call_scenario_teardown(FeatureModule, State1),
-            call_teardown(FeatureModule, State2),
+            State3 = call_scenario_teardown(FeatureModule, State2),
+            call_teardown(FeatureModule, State3),
             Stats
         catch
             Err:Reason ->
@@ -96,12 +104,12 @@ process_line({Type, LineNum, Matchables, Line},
             {_, feature} ->
                 {false, {ok, State}, Stats};
             {_, scenario} ->
-                State1 = scenario_transition(FeatureModule, State, NScenarios),
-                {false, {ok, State1},
+                ScenarioState1 = scenario_transition(FeatureModule, State, NScenarios),
+                {false, {transition, ScenarioState1},
                  Stats#cucumberl_stats{scenarios = NScenarios + 1}};
             {_, scenario_outline} ->
-                State1 = scenario_transition(FeatureModule, State, NScenarios),
-                {false, {ok, State1},
+                ScenarioOutlineState1 = scenario_transition(FeatureModule, State, NScenarios),
+                {false, {transition, ScenarioOutlineState1},
                  Stats#cucumberl_stats{scenarios = NScenarios + 1}};
             {false, {action, G}} ->
                 R = try
@@ -146,6 +154,8 @@ process_line({Type, LineNum, Matchables, Line},
                      Stats2#cucumberl_stats{ failures = [{FailedResult, Result}
                                                          |FailedSoFar] }}
             end;
+        {_, {transition, State1}} ->
+            {SkipScenario, State1, Stats2};
         _ ->
             %% TODO: is this an error case - should it fail when this happens?
             {SkipScenario, State, Stats2}
@@ -208,8 +218,6 @@ format_missing_step(GWT, [Tokens, Binary, String]) ->
     io:format("OR~n"),
     io:format("~p(~p, State, _) ->~n  undefined.~n", [GWT, String]).
 
-scenario_transition(FeatureModule, State, 0) ->
-    call_scenario_setup(FeatureModule, State);
 scenario_transition(FeatureModule, State0, _) ->
     State1 = call_scenario_teardown(FeatureModule, State0),
     call_scenario_setup(FeatureModule, State1).
