@@ -48,7 +48,7 @@ function, with this kind of call signature...
 Where Action is:
 
 - given
-- 'when'
+- 'when' or when_
 - then
 
 The TokenList parameter is a list of either atoms or strings, such as...
@@ -82,6 +82,13 @@ pattern matching.
     then([the, result, should, be, Result, on, the, screen], _, _) ->
       % Your step implementation here.
       todo.
+
+Optionally, you could write your `'when`' as:
+
+    when_([, i, press, add], _, _) ->
+      % Your step implementation here.
+      todo.
+
 
 Notice that all the tokens have been atomized (and turned lowercase).
 

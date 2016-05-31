@@ -1,7 +1,7 @@
 -module(binary_sample).
 
 -export([setup/0, teardown/1, scenario_setup/1, scenario_teardown/1,
-         given/3, 'when'/3, then/3, main/0]).
+         given/3, when_/3, then/3, main/0]).
 
 -export([enter/2, press/2]).
 
@@ -21,7 +21,7 @@ given(<<"I have entered 50 into the calculator">>, State, _) ->
 given(<<"I have entered 70 into the calculator">>, State, _) ->
     {ok, enter(State, 70)}.
 
-'when'(<<"I press add">>, State, _) ->
+when_(<<"I press add">>, State, _) ->
     {ok, press(State, add)}.
 
 then(<<"the result should be 120 on the screen">>, State, _) ->

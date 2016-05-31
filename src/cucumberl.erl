@@ -164,6 +164,15 @@ attempt_step(FeatureModule, G, State, [ArgAttempt | Rest], Line, LineNum) ->
             attempt_step(FeatureModule, G, State, Rest, Line, LineNum)
     end.
 
+apply_step(FeatureModule, G = 'when', State, Tokens, Line, LineNum) ->
+    case erlang:function_exported(FeatureModule, G, 3) of
+        true ->
+            apply(FeatureModule, G, [Tokens,
+                                     State,
+                                     {Line, LineNum}]);
+        false ->
+            apply_step(FeatureModule, when_, State, Tokens, Line, LineNum)
+    end;
 apply_step(FeatureModule, G, State, Tokens, Line, LineNum) ->
     case erlang:function_exported(FeatureModule, G, 3) of
         true ->
@@ -184,6 +193,8 @@ check_step(false)          -> failed;
 check_step({failed, _})    -> failed;
 check_step(_)              -> invalid_result.
 
+format_missing_step(when_, Args) ->
+    format_missing_step('when', Args);
 format_missing_step('when', [Tokens, Binary, String]) ->
     io:format("'when'(~p, State, _) ->~n  undefined.~n", [Tokens]),
     io:format("OR~n"),
