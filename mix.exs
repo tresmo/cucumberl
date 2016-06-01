@@ -3,7 +3,7 @@ defmodule Cucumberl.Mixfile do
 
   def project do
     [app: :cucumberl,
-     version: "0.0.9",
+     version: "0.0.10",
      description: description,
      package: package,
      deps: deps]
