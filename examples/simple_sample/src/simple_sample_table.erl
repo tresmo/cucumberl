@@ -11,12 +11,12 @@ teardown(_State) ->
 
 %% Step definitions for the sample calculator Addition feature.
 given([i, have, entered, N, into, the, calculator], State, _) ->
-    {ok, info_sample:enter(State, list_to_integer(atom_to_list(N)))};
+    {ok, simple_sample:enter(State, list_to_integer(atom_to_list(N)))};
 given([i, have, cleared, the, calculator], _State, _) ->
     {ok, []}.
 
 'when'([i, press, Op], State, _) ->
-    {ok, info_sample:press(State, Op)}.
+    {ok, simple_sample:press(State, Op)}.
 
 then([the, result, should, be, Result, on, the, screen],
      State, _) ->
