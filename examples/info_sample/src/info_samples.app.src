@@ -1,0 +1,8 @@
+{application, info_samples, [
+    {description, "Info Cucumber Samples"},
+    {vsn, "0.0.10"},
+    {applications, [
+        kernel,
+        stdlib
+    ]}
+]}.

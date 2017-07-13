@@ -1,4 +1,4 @@
--module(simple_sample_table).
+-module(noinfo_sample).
 
 -export([setup/0, teardown/1,
          given/3, 'when'/3, then/3, main/0]).
@@ -25,5 +25,5 @@ then([the, result, should, be, Result, on, the, screen],
 %% A main() to kick it all off...
 
 main() ->
-    cucumberl:run("./features/simple_sample_table.feature").
+    cucumberl:run("./features/noinfo_sample.feature").
 
