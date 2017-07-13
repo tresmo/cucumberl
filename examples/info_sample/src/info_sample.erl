@@ -1,6 +1,6 @@
 -module(info_sample).
 
--export([setup/1, teardown/1, setup_scenario/2, teardown_scenario/1,
+-export([setup/1, teardown/1, scenario_setup/2, scenario_teardown/1,
          given/3, 'when'/3, then/3, main/0]).
 
 -export([enter/2, press/2]).
@@ -9,8 +9,8 @@ setup(Info) ->
     io:format(standard_error, "info_sample:setup() Info: ~p\n", [Info]),
     [].
 
-setup_scenario(_State, Info) ->
-    io:format(standard_error, "info_sample:setup_scenario() Info: ~p\n", [Info]),
+scenario_setup(_State, Info) ->
+    io:format(standard_error, "info_sample:scenario_setup() Info: ~p\n", [Info]),
     [].
 
 %% Step definitions for the sample calculator Addition feature.
@@ -24,8 +24,8 @@ then([the, result, should, be, Result, on, the, screen],
      State, _) ->
     list_to_integer(atom_to_list(Result)) =:=State.
 
-teardown_scenario(_State) ->
-    io:format(standard_error, "info_sample:teardown_scenario()\n", []),
+scenario_teardown(_State) ->
+    io:format(standard_error, "info_sample:scenario_teardown()\n", []),
     [].
 
 teardown(_State) ->
