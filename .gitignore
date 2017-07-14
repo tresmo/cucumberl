@@ -3,5 +3,7 @@ erl_crash.dump
 **.cov.html
 *~
 cucumberl
-rebar.lock
-_build
+/rebar.lock
+/_build
+/cucumberl.iml
+/.idea/
